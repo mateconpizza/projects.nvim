@@ -9,19 +9,8 @@ end
 
 local ansi = fzf.utils.ansi_codes
 
----@return string
----@param s table<string>
-local function previewer(s)
-  local p = store.get(s[1])
-  if not p then
-    return ''
-  end
-
-  return 'last visited: ' .. util.format_last_visit(p.last_visit)
-end
-
----@return  Projects.Project[]
----@param t Projects.Project[]
+---@return  projects.Project[]
+---@param t projects.Project[]
 ---@param add_icons boolean
 ---@param add_color boolean
 local add_ansi = function(t, add_color, add_icons)
@@ -392,21 +381,20 @@ end
 ---@param opts? Projects
 M.setup = function(opts)
   opts = opts or {}
+
+  -- build key actions defaults
   local key_actions = M.defaults(opts.keymap)
+
+  -- ensure fzf config exists
   opts.fzf = opts.fzf or {}
   opts.fzf.header = opts.fzf.header or M.create_header(key_actions)
   opts.fzf.actions = vim.tbl_deep_extend('keep', opts.fzf.actions or {}, M.load_actions(key_actions))
 
-  if opts.previewer.enabled then
-    opts.fzf.fzf_opts = {
-      ['--preview'] = previewer,
-      ['--preview-window'] = 'nohidden,down,10%,border-top,+{3}+3/3,~3',
-    }
-  end
-  -- set `previewer` to nil, conflicts with `fzf-lua`
-  opts.previewer = nil
-  -- add prompt, defaults to `Projects> `
-  opts.fzf.fzf_opts['--prompt'] = opts.prompt ~= '' and opts.prompt or 'Projects> '
+  -- always ensure fzf_opts exists
+  opts.fzf.fzf_opts = opts.fzf.fzf_opts or {}
+
+  -- add prompt
+  opts.fzf.fzf_opts['--prompt'] = (opts.prompt ~= '' and opts.prompt) or 'Projects> '
 
   M.load(opts)
 end

@@ -40,7 +40,6 @@
 ---@class Projects
 ---@field name string: plugin name
 ---@field cmd string: `user-command` in neovim.
----@field previewer { enabled: boolean }: enable previewer
 ---@field prompt string: fzf's prompt
 ---@field fname string: file store ($XDG_DATA_HOME/nvim or ~/.local/share/nvim)
 ---@field color boolean: enable color output
