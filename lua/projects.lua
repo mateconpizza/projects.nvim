@@ -8,7 +8,7 @@
 ---
 ---@brief ]]
 
----@class Projects.Project
+---@class projects.Project
 ---@field name string: project name
 ---@field path string: project path
 ---@field fmt string?: fzf's string format

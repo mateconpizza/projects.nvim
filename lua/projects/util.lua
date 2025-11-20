@@ -39,8 +39,8 @@ M.split_newline = function(s)
   return result
 end
 
----@param projects Projects.Project[]
----@return Projects.Project[]
+---@param projects projects.Project[]
+---@return projects.Project[]
 M.replace_home = function(projects)
   return vim.tbl_map(function(project)
     project.path = replace_home(project.path)

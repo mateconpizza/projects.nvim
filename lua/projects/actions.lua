@@ -51,12 +51,8 @@ local add_ansi = function(t, add_color, add_icons)
   return t
 end
 
----@class Projects.FzfAction
-local M = {
-  fzf_files = fzf.files,
-  fzf_live_grep = fzf.live_grep,
-  fzf_resume = fzf.actions.resume,
-}
+---@class projects.FzfAction
+local M = {}
 
 ---@return boolean
 ---@param s table<string?>
@@ -120,7 +116,14 @@ M.add = function(_)
   local root = pathlib.get_root()
   local name = vim.fs.basename(root)
 
-  ---@type Projects.Project
+  local filepath = vim.fn.expand('%:p')
+  local filename = vim.fs.basename(filepath)
+  if filepath ~= '' and util.confirm("Add '" .. filename .. "' file as project?", { 'yes', 'no' }) then
+    root = filepath
+    name = filename
+  end
+
+  ---@type projects.Project
   local project = {
     name = name,
     path = root,
@@ -237,17 +240,17 @@ M.edit_type = function(s)
     store.edit_type(input, p)
   end)
 
-  M.fzf_resume()
+  fzf.resume()
 end
 
----@param p Projects.Project
+---@param p projects.Project
 M.update_last_visit = function(p)
   p.last_visit = os.time()
   store.update(p)
 end
 
 ---@return string
----@param act Projects.Action[]
+---@param act projects.Action[]
 M.create_header = function(act)
   local result = ''
   local sep = ' '
@@ -269,7 +272,7 @@ M.create_header = function(act)
 end
 
 ---@return table
----@param act Projects.Action[]
+---@param act projects.Action[]
 M.load_actions = function(act)
   local result = {}
   if vim.tbl_isempty(act) then
@@ -285,7 +288,7 @@ M.load_actions = function(act)
   return result
 end
 
----@param opts Projects
+---@param opts projects.opts
 M.load = function(opts)
   fzf.fzf_exec(function(fzf_cb)
     local projects = store.data()
@@ -307,24 +310,24 @@ M.load = function(opts)
   end, opts.fzf)
 end
 
----@class Projects.Action
+---@class projects.Action
 ---@field title string: title of the action.
 ---@field keybind string: keybinding for the action.
 ---@field fn function: function to execute for the action.
 ---@field header boolean: indicates whether the action's description should be displayed in the header.
 
----@class Projects.DefaultsActions
----@field enter Projects.Action: default action.
----@field add Projects.Action: action to add.
----@field edit_path Projects.Action: action to edit the path.
----@field edit_type Projects.Action: action to edit the type.
----@field grep Projects.Action: action to grep.
----@field remove Projects.Action: action to remove.
----@field rename Projects.Action: action to rename.
----@field restore Projects.Action: action to restore.
+---@class projects.DefaultsActions
+---@field enter projects.Action: default action.
+---@field add projects.Action: action to add.
+---@field edit_path projects.Action: action to edit the path.
+---@field edit_type projects.Action: action to edit the type.
+---@field grep projects.Action: action to grep.
+---@field remove projects.Action: action to remove.
+---@field rename projects.Action: action to rename.
+---@field restore projects.Action: action to restore.
 
----@param keymap Projects.Keymaps: keymap for the project actions.
----@return Projects.DefaultsActions: default configuration of actions.
+---@param keymap projects.Keymaps: keymap for the project actions.
+---@return projects.DefaultsActions: default configuration of actions.
 M.defaults = function(keymap)
   return {
     enter = {
@@ -378,7 +381,7 @@ M.defaults = function(keymap)
   }
 end
 
----@param opts? Projects
+---@param opts? projects.opts
 M.setup = function(opts)
   opts = opts or {}
 

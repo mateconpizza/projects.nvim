@@ -45,8 +45,8 @@ M.color_by_ft = function(ft)
   return M.get_color_by_ft(ft)
 end
 
----@return  Projects.Project[]
----@param t Projects.Project[]
+---@return  projects.Project[]
+---@param t projects.Project[]
 ---@param add_color boolean
 M.load = function(t, add_color)
   for _, p in ipairs(t) do
@@ -63,7 +63,7 @@ M.load = function(t, add_color)
   return t
 end
 
----@param opts Projects.Icons
+---@param opts projects.Icons
 M.setup = function(opts)
   M.warning = opts.warning
   M.default_icon = opts.default
