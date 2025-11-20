@@ -261,25 +261,21 @@ M.update_last_visit = function(p)
 end
 
 ---@return string
----@param act projects.Action[]
+---@param act table<string, projects.Action>
 M.create_header = function(act)
   local result = ''
   local sep = ' '
-  local count = 0
-  local n = vim.tbl_count(act)
-  for _, t in pairs(act) do
-    count = count + 1
+
+  local keys = vim.tbl_keys(act)
+  table.sort(keys)
+  for _, key in ipairs(keys) do
+    local t = act[key]
     if t.header then
-      local key = string.format('%s:%s', fzf.utils.ansi_codes.yellow(t.keybind), t.title)
-      if count == n then
-        result = result .. key
-      else
-        result = result .. key .. sep
-      end
+      result = result .. string.format('%s:%s', ansi.yellow(t.keybind), t.title) .. sep
     end
   end
 
-  return result
+  return result:sub(1, -#sep - 1)
 end
 
 ---@return table
