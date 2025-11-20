@@ -1,38 +1,34 @@
-# 💥 Projects fzf
+# Projects fzf
 
 [![Neovim](https://img.shields.io/badge/Neovim-57A143?logo=neovim&logoColor=fff)](#)
 [![Lua](https://img.shields.io/badge/Lua-%232C2D72.svg?logo=lua&logoColor=white)](#)
 
-Simple [fzf-lua](https://github.com/ibhagwan/fzf-lua.git) project manager for [`neovim`](https://github.com/neovim/neovim/releases).
+<p align="center">
+    <img src="assets/pic-light.png"
+    alt="Preview" style="width: 80%; max-width: 600px; height: auto;">
+</p>
 
-> [!WARNING]
-> This is currently a work in progress, expect things to be broken!
+<p align="center">- Simple <a href="https://github.com/ibhagwan/fzf-lua.git">fzf-lua</a> project manager for <a href="https://github.com/neovim/neovim/releases">neovim</a>. -<p>
 
-<div align="left">
-  <img align="center" src="assets/pic.png">
-</div>
-
-## ⚡️ Dependencies
+## Dependencies
 
 - [`neovim`](https://github.com/neovim/neovim/releases) <small>version >=</small> `0.9.0`
 - [`fzf-lua`](https://github.com/ibhagwan/fzf-lua) <small>neovim plug-in</small>
-- [`nvim-web-devicons`](https://github.com/nvim-tree/nvim-web-devicons) or [`mini.icons`](https://github.com/echasnovski/mini.icons)
-  <small><i><b>(optional)</b></i></small>
 
-## 📦 Installation
+## Installation
 
 ### [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 {
-  'haaag/projects.nvim',
+  'mateconpizza/projects.nvim',
   dependencies = {
     "ibhagwan/fzf-lua",
-    -- optional icons
-    "nvim-tree/nvim-web-devicons",
-    -- or
-    "echasnovski/mini.icons",
+    -- optional: add file icons support
+    "nvim-tree/nvim-web-devicons",  -- or use 'nvim-mini/mini.icons'
   },
+  ---@module 'projects'
+  ---@type projects.opts
   opts = {},
   keys = {
     { '<leader>sp', '<CMD>FzfLuaProjects<CR>', desc = 'search projects' },
@@ -42,7 +38,7 @@ Simple [fzf-lua](https://github.com/ibhagwan/fzf-lua.git) project manager for [`
 ```
 
 <details>
-<summary><strong>⚙️ Default configuration</strong></summary>
+<summary><strong>Default configuration</strong></summary>
 
 ```lua
 require('projects').setup({
@@ -76,5 +72,17 @@ require('projects').setup({
   },
 })
 ```
+
+</details>
+
+<details>
+<summary><strong>Dark mode screenshot</strong></summary>
+
+<div>
+    <p align="center">
+        <img src="assets/pic-dark.png"
+        alt="Preview" style="width: 80%; max-width: 600px; height: auto;">
+    </p>
+</div>
 
 </details>
