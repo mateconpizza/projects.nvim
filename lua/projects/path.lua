@@ -91,6 +91,9 @@ M.change_cwd = function(p)
     return false
   end
 
+  -- parent directory
+  p = vim.fs.dirname(p)
+
   if not M.exists(p) then
     util.err(p .. ' do not exists')
     return false
@@ -122,14 +125,16 @@ end
 
 ---@return boolean
 ---@param fname string?
-M.path_is_directory = function(fname)
-  local S_IFDIR = 0x4000 -- directory
-  local stat = uv.fs_stat(fname)
+M.is_file = function(fname)
+  local stat = vim.loop.fs_stat(fname)
+  return stat and stat.type == 'file'
+end
 
-  if stat and bit.band(stat.mode, 0xF000) == S_IFDIR then
-    return true
-  end
-  return false
+---@return boolean
+---@param fname string?
+M.is_dir = function(fname)
+  local stat = uv.fs_stat(fname)
+  return stat and stat.type == 'directory'
 end
 
 -- returns the root directory based on:

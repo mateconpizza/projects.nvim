@@ -17,74 +17,30 @@
 ---@field type string: project type
 ---@field icon string?: project icon
 
----@class Projects.Icons
----@field default string: default icon
----@field warning string: default warning icon if project does not exist
----@field color string?: default icon color
----@field enabled boolean: enable icons
+---@module 'projects'
+local M = {}
 
----@class Projects.Keymaps
----@field add string: add project
----@field edit_path string: edit project path
----@field edit_type string: edit project type
----@field grep string: grep in project path
----@field remove string: remove project
----@field rename string: rename project
----@field restore string: restore state
+M.config = require('projects.config')
 
----@class Projects.FzfOpts
----@field header string: fzf header
----@field actions Projects.Action[]: fzf actions
----@field fzf_opts table: fzf options
-
----@class Projects
----@field name string: plugin name
----@field cmd string: `user-command` in neovim.
----@field prompt string: fzf's prompt
----@field fname string: file store ($XDG_DATA_HOME/nvim or ~/.local/share/nvim)
----@field color boolean: enable color output
----@field icons Projects.Icons: projects icons
----@field keymap Projects.Keymaps: fzf's keybinds
----@field fzf Projects.FzfOpts: fzf's options
-local M = {
-  name = 'projects.nvim',
-  cmd = 'FzfLuaProjects',
-  previewer = {
-    enabled = true,
-  },
-  prompt = 'Projects> ',
-  icons = {
-    default = '',
-    warning = '',
-    color = nil,
-    enabled = true,
-  },
-  fname = vim.fn.stdpath('data') .. '/projects.json',
-  color = true,
-  keymap = {
-    add = 'ctrl-a',
-    edit_path = 'ctrl-e',
-    edit_type = 'ctrl-t',
-    grep = 'ctrl-g',
-    remove = 'ctrl-x',
-    rename = 'ctrl-r',
-    restore = 'ctrl-u',
-  },
-}
-
----@param opts? Projects
+---@param opts? projects.opts
 M.setup = function(opts)
-  vim.api.nvim_create_user_command(M.cmd, function()
-    opts = vim.tbl_deep_extend('keep', opts or {}, M)
+  -- FIX: use vim.validate
+  -- vim.validate('opts', opts, 'table', true)
+  vim.api.nvim_create_user_command(M.config.cmd, function()
+    opts = vim.tbl_deep_extend('keep', opts or {}, M.config)
+
+    -- setup logger name
     require('projects.util').setup(opts)
+
+    -- setup icons support
     if opts.icons.enabled then
-      -- check if user installed a icons provider
-      local ok, _ = pcall(require, 'projects.icons')
+      local ok, icons = pcall(require, 'projects.icons')
       if not ok then
         return
       end
-      require('projects.icons').setup(opts.icons)
+      icons.setup(opts.icons)
     end
+
     require('projects.store').setup(opts)
     require('projects.actions').setup(opts)
   end, {})

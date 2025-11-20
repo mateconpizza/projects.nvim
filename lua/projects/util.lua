@@ -1,7 +1,10 @@
 ---@param f string
 ---@return string, number
 local function replace_home(f)
-  local homeDir = os.getenv('HOME') or ''
+  local homeDir = os.getenv('HOME')
+  if not homeDir or homeDir == '' then
+    return f, 0
+  end
   return f:gsub(homeDir, '~')
 end
 
@@ -71,10 +74,35 @@ M.convert_to_hex = function(color)
   return string.format('#%06x', color)
 end
 
----@param opts? Projects
+---@param opts? projects.opts
 M.setup = function(opts)
   opts = opts or {}
   M.prefix = opts.name
+end
+
+---@param mesg string
+---@param choices string[]
+M.confirm = function(mesg, choices)
+  mesg = mesg .. ' ['
+  local valid_choices = {}
+  for i, choice in ipairs(choices) do
+    valid_choices[choice:lower()] = true
+    mesg = mesg .. choice:lower()
+    if #choices ~= i then
+      mesg = mesg .. '/'
+    end
+  end
+  mesg = mesg .. ']: '
+
+  ---@type string
+  local choice = vim.fn.input({ prompt = mesg })
+  choice = choice:lower()
+
+  if not valid_choices[choice] then
+    return false
+  end
+
+  return true
 end
 
 return M

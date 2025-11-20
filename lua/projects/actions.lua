@@ -94,8 +94,14 @@ M.grep = function(s)
     return
   end
 
-  M.fzf_live_grep({ cwd = p.path })
-  M.fzf_resume()
+  if pathlib.is_file(p.path) then
+    vim.cmd('edit ' .. p.path)
+    fzf.lgrep_curbuf()
+    return
+  end
+
+  fzf.live_grep({ cwd = p.path })
+  fzf.resume()
 end
 
 ---@param s table<string?>
@@ -109,7 +115,12 @@ M.open = function(s)
     return
   end
 
-  M.fzf_files({ cwd = p.path })
+  if pathlib.is_file(p.path) then
+    vim.cmd('edit ' .. p.path)
+    return
+  end
+
+  fzf.files({ cwd = p.path })
 end
 
 M.add = function(_)
@@ -132,7 +143,7 @@ M.add = function(_)
   }
 
   store.insert(project)
-  M.fzf_resume()
+  fzf.resume()
 end
 
 ---@param s table<string?>
@@ -148,7 +159,7 @@ M.remove = function(s)
   end
 
   store.remove(p)
-  M.fzf_resume()
+  fzf.resume()
 end
 
 M.restore = function(_)
@@ -156,7 +167,7 @@ M.restore = function(_)
     return
   end
 
-  M.fzf_resume()
+  fzf.resume()
 end
 
 ---@param s table<string?>
@@ -184,7 +195,7 @@ M.rename = function(s)
     store.rename(input, p)
   end)
 
-  M.fzf_resume()
+  fzf.resume()
 end
 
 ---@param s table<string?>
@@ -212,7 +223,7 @@ M.edit_path = function(s)
     store.edit_path(input, p)
   end)
 
-  M.fzf_resume()
+  fzf.resume()
 end
 
 ---@param s table<string?>
