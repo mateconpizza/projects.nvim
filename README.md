@@ -2,18 +2,25 @@
 
 [![Neovim](https://img.shields.io/badge/Neovim-57A143?logo=neovim&logoColor=fff)](#)
 [![Lua](https://img.shields.io/badge/Lua-%232C2D72.svg?logo=lua&logoColor=white)](#)
+![Terminal](https://img.shields.io/badge/Terminal-Compatible-brightgreen)
 
 <p align="center">
     <img src="assets/pic-light.png"
-    alt="Preview" style="width: 80%; max-width: 600px; height: auto;">
+    alt="Preview" style="width: 90%; max-width: 600px; height: auto;">
 </p>
 
-<p align="center">- Simple <a href="https://github.com/ibhagwan/fzf-lua.git">fzf-lua</a> project manager for <a href="https://github.com/neovim/neovim/releases">neovim</a>. -<p>
+<p align="center">~ A project manager with icons, grep support, and per-project type configuration ~<p>
 
 ## Dependencies
 
 - [`neovim`](https://github.com/neovim/neovim/releases) <small>version >=</small> `0.9.0`
 - [`fzf-lua`](https://github.com/ibhagwan/fzf-lua) <small>neovim plug-in</small>
+
+## Features
+
+- **Icons Support**
+- **Fuzzy grep/search** inside a project
+- **Assign project types** (e.g. `lua`, `cpp`, `golang`) to enable file-type specific icons.
 
 ## Installation
 
@@ -41,6 +48,7 @@
 <summary><strong>Default configuration</strong></summary>
 
 ```lua
+-- There's no need to include this in setup(). It will be used automatically.
 require('projects').setup({
   name = 'projects.nvim', -- plugin name
   cmd = 'FzfLuaProjects', -- `user-command` in neovim.
