@@ -6,7 +6,7 @@
 
 <p align="center">
     <img src="assets/pic-light.png"
-    alt="Preview" style="width: 90%; max-width: 600px; height: auto;">
+    alt="Preview" style="width: 68%; max-width: 600px; height: auto;">
 </p>
 
 <p align="center">~ A project manager with icons, grep support, and per-project type configuration ~<p>
