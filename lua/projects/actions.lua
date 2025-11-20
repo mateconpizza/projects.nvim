@@ -1,6 +1,6 @@
-local util = require('projects.util')
-local store = require('projects.store')
 local pathlib = require('projects.path')
+local store = require('projects.store')
+local util = require('projects.util')
 local ok, fzf = pcall(require, 'fzf-lua')
 if not ok then
   util.err('fzf-lua not installed. https://github.com/ibhagwan/fzf-lua')
@@ -14,9 +14,7 @@ local ansi = fzf.utils.ansi_codes
 ---@param add_icons boolean
 ---@param add_color boolean
 local add_ansi = function(t, add_color, add_icons)
-  if vim.tbl_isempty(t) then
-    return t
-  end
+  if vim.tbl_isempty(t) then return t end
 
   t = util.replace_home(t)
 
@@ -74,9 +72,7 @@ function M.load_project(s)
   end
 
   local changed = pathlib.change_cwd(p.path)
-  if not changed then
-    return false
-  end
+  if not changed then return false end
 
   M.update_last_visit(p)
 
@@ -85,14 +81,10 @@ end
 
 ---@param s table<string?>
 M.grep = function(s)
-  if not M.load_project(s) then
-    return
-  end
+  if not M.load_project(s) then return end
 
   local p = store.get(s[1])
-  if not p then
-    return
-  end
+  if not p then return end
 
   if pathlib.is_file(p.path) then
     vim.cmd('edit ' .. p.path)
@@ -106,14 +98,10 @@ end
 
 ---@param s table<string?>
 M.open = function(s)
-  if not M.load_project(s) then
-    return
-  end
+  if not M.load_project(s) then return end
 
   local p = store.get(s[1])
-  if not p then
-    return
-  end
+  if not p then return end
 
   if pathlib.is_file(p.path) then
     vim.cmd('edit ' .. p.path)
@@ -154,18 +142,14 @@ M.remove = function(s)
   end
 
   local p = store.get(s[1])
-  if p == nil then
-    return
-  end
+  if p == nil then return end
 
   store.remove(p)
   fzf.resume()
 end
 
 M.restore = function(_)
-  if not store.restore() then
-    return
-  end
+  if not store.restore() then return end
 
   fzf.resume()
 end
@@ -189,9 +173,7 @@ M.rename = function(s)
   }
 
   vim.ui.input(prompt_opts, function(input)
-    if not input or #input == 0 then
-      return
-    end
+    if not input or #input == 0 then return end
     store.rename(input, p)
   end)
 
@@ -217,9 +199,7 @@ M.edit_path = function(s)
   }
 
   vim.ui.input(prompt_opts, function(input)
-    if not input or #input == 0 then
-      return
-    end
+    if not input or #input == 0 then return end
     store.edit_path(input, p)
   end)
 
@@ -245,9 +225,7 @@ M.edit_type = function(s)
   }
 
   vim.ui.input(prompt_opts, function(input)
-    if not input or #input == 0 then
-      return
-    end
+    if not input or #input == 0 then return end
     store.edit_type(input, p)
   end)
 
@@ -270,9 +248,7 @@ M.create_header = function(act)
   table.sort(keys)
   for _, key in ipairs(keys) do
     local t = act[key]
-    if t.header then
-      result = result .. string.format('%s:%s', ansi.yellow(t.keybind), t.title) .. sep
-    end
+    if t.header then result = result .. string.format('%s:%s', ansi.yellow(t.keybind), t.title) .. sep end
   end
 
   return result:sub(1, -#sep - 1)
@@ -282,14 +258,10 @@ end
 ---@param act projects.Action[]
 M.load_actions = function(act)
   local result = {}
-  if vim.tbl_isempty(act) then
-    return result
-  end
+  if vim.tbl_isempty(act) then return result end
 
   for _, t in pairs(act) do
-    if t.fn and t.keybind then
-      result[t.keybind] = t.fn
-    end
+    if t.fn and t.keybind then result[t.keybind] = t.fn end
   end
 
   return result
@@ -301,9 +273,7 @@ M.load = function(opts)
     local projects = store.data()
     projects = add_ansi(projects, opts.color, opts.icons.enabled)
 
-    if opts.icons.enabled then
-      projects = require('projects.icons').load(projects, opts.color)
-    end
+    if opts.icons.enabled then projects = require('projects.icons').load(projects, opts.color) end
 
     table.sort(projects, function(a, b)
       return a.last_visit > b.last_visit
