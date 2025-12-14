@@ -8,25 +8,40 @@ if not ok then
   return
 end
 
+local devicons = require('fzf-lua.devicons')
 local fzf = require('fzf-lua')
 local util = require('projects.util')
-local devicons = require('fzf-lua.devicons')
 local M = {}
 
 M.default_icon = ''
 M.default_color = ''
 M.warning = ''
 
+local function resolve_hl_fg(name, visited)
+  visited = visited or {}
+
+  -- prevent infinite loops
+  if visited[name] then return nil end
+  visited[name] = true
+
+  local hl = vim.api.nvim_get_hl(0, { name = name })
+
+  if hl.fg then return hl.fg end
+  if hl.link then return resolve_hl_fg(hl.link, visited) end
+
+  return nil
+end
+
 ---@param ft string
 ---@return string
 M.get_color_by_ft = function(ft)
   local _, hl_name = devicons.icon_by_ft(ft)
-  local hl = vim.api.nvim_get_hl(0, { name = hl_name }) -- 0 for current window
-  if not hl or not hl.fg then
-    return M.default_color
-  end
+  if not hl_name then return M.default_color end
 
-  return util.convert_to_hex(hl.fg)
+  local fg = resolve_hl_fg(hl_name)
+  if not fg then return M.default_color end
+
+  return util.convert_to_hex(fg)
 end
 
 ---@return string
@@ -38,10 +53,7 @@ end
 ---@return string
 ---@param ft string
 M.color_by_ft = function(ft)
-  if ft == 'default' then
-    return M.default_color
-  end
-
+  if ft == 'default' then return M.default_color end
   return M.get_color_by_ft(ft)
 end
 
@@ -53,9 +65,7 @@ M.load = function(t, add_color)
     local icon = add_color and fzf.utils.ansi_from_rgb(M.color_by_ft(p.type), p.icon) or p.icon
 
     -- replace with warning icon if project does not exist
-    if not p.exists then
-      icon = add_color and fzf.utils.ansi_codes.red(M.warning) or M.warning
-    end
+    if not p.exists then icon = add_color and fzf.utils.ansi_codes.red(M.warning) or M.warning end
 
     p.fmt = icon .. ' ' .. p.fmt
   end

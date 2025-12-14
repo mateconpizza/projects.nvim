@@ -18,7 +18,7 @@
 ---@field actions? projects.Action[]: fzf actions
 ---@field fzf_opts? table: fzf options
 
----@class projects.opts
+---@class (exact) projects.opts
 ---@field name? string: plugin name
 ---@field cmd? string: `user-command` in neovim.
 ---@field prompt? string: fzf's prompt
