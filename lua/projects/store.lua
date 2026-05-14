@@ -1,5 +1,5 @@
-local util = require('projects.util')
 local pathlib = require('projects.path')
+local util = require('projects.util')
 
 ---@class Store
 local M = {}
@@ -22,9 +22,7 @@ M.data = function()
     p.exists = pathlib.exists(p.path)
 
     -- add icon
-    if M.icons then
-      p.icon = require('projects.icons').get_by_ft(p.type)
-    end
+    if M.icons then p.icon = require('projects.icons').get_by_ft(p.type) end
 
     table.insert(projects, p)
   end
@@ -43,9 +41,7 @@ M.insert = function(p)
   end
 
   table.insert(data, p)
-  if not pathlib.writefile(M.fname, data) then
-    return
-  end
+  if not pathlib.writefile(M.fname, data) then return end
 
   util.info(string.format("'%s' added", p.name))
 end
@@ -142,13 +138,9 @@ end
 ---@return projects.Project?
 ---@param s string?
 M.get = function(s)
-  if type(s) ~= 'string' then
-    util.warn('expected type string, got: ' .. type(s))
-  end
+  if type(s) ~= 'string' then util.warn('expected type string, got: ' .. type(s)) end
 
-  if s == nil then
-    return
-  end
+  if s == nil then return end
 
   local projects = M.data()
   local project = nil
@@ -175,9 +167,7 @@ end
 M.get_idx = function(p)
   local data = M.data()
   for i, t in ipairs(data) do
-    if t.name == p.name and t.path == p.path then
-      return i
-    end
+    if t.name == p.name and t.path == p.path then return i end
   end
 
   return -1
@@ -201,9 +191,7 @@ end
 ---@param s string?
 ---@return string, string
 M.extract_name_path = function(s)
-  if s == nil or s == '' then
-    return '', ''
-  end
+  if s == nil or s == '' then return '', '' end
   local _, name, path = s:match('^(%S*)%s*(%S+)%s+(.+)$')
   return name or '', path or ''
 end
@@ -211,14 +199,24 @@ end
 ---@param opts? projects.opts
 M.setup = function(opts)
   opts = opts or {}
-  if vim.fn.filereadable(opts.fname) == 0 then
-    util.err("file not readable: '" .. opts.fname .. "'")
+
+  local fname = opts.fname
+
+  if type(fname) ~= 'string' or fname == '' then
+    util.err('store.setup: invalid fname')
     return
   end
 
-  M.fname = opts.fname
+  -- create file if needed
+  pathlib.touch(fname)
+
+  if vim.fn.filereadable(fname) == 0 then
+    util.err("store.setup: file not readable: '" .. fname .. "'")
+    return
+  end
+
+  M.fname = fname
   M.icons = opts.icons.enabled
-  pathlib.touch(opts.fname)
 end
 
 return M
