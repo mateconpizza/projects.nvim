@@ -7,9 +7,7 @@ local M = {}
 ---@return boolean
 ---@param fname string?
 M.exists = function(fname)
-  if fname == '' or fname == nil then
-    return false
-  end
+  if fname == '' or fname == nil then return false end
 
   local file = io.open(fname, 'r')
   if file then
@@ -44,14 +42,10 @@ end
 ---@return projects.Project[]
 ---@param fname string?
 M.readfile = function(fname)
-  if not fname or vim.fn.filereadable(fname) == 0 then
-    return {}
-  end
+  if not fname or vim.fn.filereadable(fname) == 0 then return {} end
 
   local data = vim.fn.readfile(vim.fn.expand(fname))
-  if vim.tbl_count(data) == 0 then
-    return {}
-  end
+  if vim.tbl_count(data) == 0 then return {} end
 
   return vim.fn.json_decode(data)
 end
@@ -77,9 +71,7 @@ M.writefile = function(fname, t)
   end
 
   local success, err = pcall(vim.fn.writefile, { data }, fname)
-  if not success then
-    util.err('write: ' .. err)
-  end
+  if not success then util.err('write: ' .. err) end
 
   return success
 end
@@ -87,9 +79,7 @@ end
 ---@return boolean
 ---@param p string?
 M.change_cwd = function(p)
-  if p == nil then
-    return false
-  end
+  if p == nil then return false end
 
   -- parent directory
   p = vim.fs.dirname(p)
@@ -106,17 +96,23 @@ end
 
 ---@param fname string?
 M.touch = function(fname)
-  if fname == '' or fname == nil then
+  if type(fname) ~= 'string' or fname == '' then
     util.err('touch: filename can not be empty')
     return
   end
 
-  if M.exists(fname) then
+  if M.exists(fname) then return end
+
+  local dir = vim.fs.dirname(fname)
+
+  if dir and vim.fn.isdirectory(dir) == 0 then
+    util.err("touch: directory does not exist: '" .. dir .. "'")
     return
   end
 
-  local file = io.open(fname, 'w')
+  local file, err = io.open(fname, 'w')
   if not file then
+    util.err('touch: ' .. (err or 'failed to create file'))
     return
   end
 
@@ -162,9 +158,7 @@ function M.get_root()
         or {}
       for _, p in ipairs(paths) do
         local r = vim.loop.fs_realpath(p)
-        if path:find(r, 1, true) then
-          roots[#roots + 1] = r
-        end
+        if path:find(r, 1, true) then roots[#roots + 1] = r end
       end
     end
   end
