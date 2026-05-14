@@ -59,11 +59,6 @@ M.writefile = function(fname, t)
     return false
   end
 
-  if vim.tbl_isempty(t) then
-    util.err('write: no data')
-    return false
-  end
-
   local data = vim.fn.json_encode(t)
   if not data then
     util.err('write: failed to encode data to JSON')
